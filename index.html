@@ -1,0 +1,494 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>Архитектура. Другой взгляд</title>
+
+		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/monokai.css">
+        <link rel="stylesheet" href="neucha/fonts.css">
+        <link rel="stylesheet" href="anonymous_pro/fonts.css">
+        <link rel="stylesheet" href="css/custom.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+        <style>
+.reveal mark *, .reveal mark {
+    color: #fff!important;
+}
+.reveal mark {
+    background-color: #E9530E!important;
+}
+        </style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+                <section>
+                    <h2>
+                        Архитектура. Другой взгляд
+                    </h2>
+                </section>
+                <section>
+                    <img src="img/infobip.svg" style="max-height: 600px" alt="" srcset="">
+                </section>
+                <section>
+                    <p>
+                        Жизнь надо прожить так, чтобы не было мучительно больно за бесцельно прожитые годы
+                    </p>
+                </section>
+                <section>
+                    Я должен писать код так, чтобы не пришлось переписывать ВСЁ, если резко поменяются требования
+                </section>
+                <section>
+                    Хоршая архитектура должна быть гибкой!
+                </section>
+                <!-- <section data-transition="slide none"> -->
+                    <!-- <pre><code class="javascript" data-trim data-noescape> -->
+<!-- // simple function -->
+<!-- function add(x, y){ -->
+  <!-- return x + y; -->
+<!-- } -->
+                    <!-- </code></pre> -->
+                <!-- </section> -->
+                <!-- <section data-transition="none"> -->
+                    <!-- <pre><code data-trim data-noescape> -->
+<!-- // Check that arguments are numbers -->
+<!-- function add(x,y){ -->
+  <!-- <mark>if(typeof x !== 'number' || typeof y !== 'number'){ -->
+    <!-- throw new Error('can\'t summ not a number'); -->
+  <!-- }</mark> -->
+  <!-- return x + y; -->
+<!-- } -->
+                    <!-- </code></pre> -->
+                <!-- </section> -->
+                <!-- <section data-transition="none"> -->
+                    <!-- <pre><code data-trim data-noescape> -->
+<!-- // Check that arguments are numbers -->
+<!-- function add(x,y){ -->
+ <!-- <mark>const parsedX = parseFloat(x,10); -->
+ <!-- const parsedY = parseFloat(y,10);</mark> -->
+
+  <!-- if(Number.isNaN(parsedX) || Number.isNaN(parsedY)){ -->
+    <!-- throw new Error('can\'t summ not a number'); -->
+  <!-- } -->
+  <!-- return x + y; -->
+<!-- } -->
+
+                    <!-- </code></pre> -->
+                <!-- </section> -->
+                <!-- <section data-transition="none slide"> -->
+                    <!-- <pre><code data-trim data-noescape> -->
+<!-- // Check that arguments are numbers -->
+<!-- function add(x,y){ -->
+ <!-- <mark>const parsedX = parseFloat(x,10); -->
+ <!-- const parsedY = parseFloat(y,10);</mark> -->
+
+  <!-- if(<mark>Number.isNaN(parsedX)</mark> || <mark>Number.isNaN(parsedY)</mark>){ -->
+    <!-- throw new Error('can\'t summ not a number'); -->
+  <!-- } -->
+  <!-- return x + y; -->
+<!-- } -->
+
+                    <!-- </code></pre> -->
+                <!-- </section> -->
+                <!-- <section> -->
+                    <!-- Number.MAX_VALUE? -->
+                <!-- </section> -->
+                <!-- <section> -->
+                    <!-- Что если аргументов будет 5? -->
+                <!-- </section> -->
+                <!-- <section> -->
+                    <!-- <pre><code data-trim data-noescape> -->
+                    <!-- console.log(add(10, 20));<span class="fragment">// 30???</span> -->
+                    <!-- </code></pre> -->
+                <!-- </section> -->
+                <!-- <section> -->
+                    <!-- Люди не дураки и в жизни так не бывает -->
+                <!-- </section> -->
+                <section data-transition="slide">
+                    <pre><code class="html" data-trim data-noescape>
+&lt;div className="ib-checkbox"&gt;
+    &lt;input type="checkbox" className="ib-checkbox--input"&gt;
+&lt;/div&gt;
+                    </code></pre>
+                </section>
+                <section data-transition="slide none">
+                    SOLID, DRY, YAGNI, KISS
+                </section>
+                <section data-transition="none slide">
+                    SOLID, <mark>DRY,</mark> YAGNI, KISS
+                </section>
+                <section>
+                    Don’t repeat yourself
+                </section>
+                <section data-transition="slide none">
+                    <pre><code class="html" data-trim data-noescape>
+&lt;div className="ib-checkbox"&gt;
+    &lt;input type="checkbox" className="ib-checkbox--input"&gt;
+&lt;/div&gt;
+                    </code></pre>
+                </section>
+                <section data-transition="slide none">
+                    <pre><code class="html" data-trim data-noescape>
+&lt;div className="<mark>ib-checkbox</mark>"&gt;
+    &lt;input type="checkbox" className="<mark>ib-checkbox</mark>--input"&gt;
+&lt;/div&gt;
+                    </code></pre>
+                </section>
+                <section>
+                    <pre><code data-trim>
+function bemClass(block: string) {
+    return (element?: string, mods?: object): string =&gt; {
+        if (!element) { return block; }
+        const result = [getElementClass(block, element)];
+        if (mods) {
+            forEach(mods, (needAdd, mod) =&gt; {
+                if (!needAdd) { return; }
+                result.push(getElementClass(block, element, mod));
+            });
+        }
+        return result.join(' ');
+    };
+}
+                    </code></pre>
+                </section>
+                <section>
+                    <pre><code data-trim data-noescape>
+<mark>const bem = bemClass('checkbox');</mark>
+
+export default () =&gt; (
+  &lt;div class={<mark>bem()</mark>}&gt;
+    &lt;input type="checkbox" className={<mark>bem('input')</mark>}&gt;
+  &lt;/div&gt;
+)
+                    </code></pre>
+                </section>
+                <section>
+                    <pre><code class="jsx" data-trim data-noescape>
+const bem = bemClass('checkbox');
+
+export default () =&gt; (
+  &lt;div class={bem()}&gt;
+    &lt;input className={classnames({
+        [bem('input')]: true,
+        [bem('input', ['checked'])]: this.props.checked
+        })}&gt;
+  &lt;/div&gt;
+)
+                    </code></pre>
+                </section>
+                <section>
+                    <pre><code class="jsx" data-trim data-noescape>
+const bem = bemClass('checkbox');
+
+classnames({
+  [bem('input')]: true,
+  [bem('input', ['checked'])]: this.props.checked
+})
+                    </code></pre>
+                </section>
+                <section data-transition="slide none">
+                    <pre><code class="javascript" data-trim data-noescape>
+  `ib_checkbox--input
+  ${checked ? 'ib_checkbox--input__checked': ''}`
+                    </code></pre>
+                </section>
+                <section>
+                    Есть DRY<span class="fragment">, но еще есть KISS</span>
+                </section>
+                <section>
+                    Гибкость VS Сложность
+                </section>
+                <section>
+                    Самый гибкий фреймворк - язык программирования
+                </section>
+                <section>
+                    Причем здесь архитектура, ты же про код говоришь?!
+                </section>
+                <section>
+                    <img src="img/arch.jpg" alt="" sizes="" srcset="">
+                </section>
+                <section>
+                    <p>
+                        Архитектура в IT &mdash; метафора
+                    </p>
+                    <p class="fragment">
+                        Метафора, которой не было...
+                    </p>
+                </section>
+                <section>
+                    <img src="img/lug.jpg" style="max-height: 400px">
+                    <p>Луковая архитектура</p>
+                </section>
+                <section data-background-color="#ffffff">
+                    <img src="img/onion_architecture.png">
+                </section>
+                <section>
+                    <h2>Metaphors We Live By</h2>
+                    <img src="img/metaphors.jpg" alt="" sizes="" srcset="">
+                    <p>George Lakoff and Mark Johnson </p>
+                </section>
+                <section>
+                    <img src="img/s1200.jpeg">
+                </section>
+                <section>
+                    Давайте спланируем перед тем как делать!
+                </section>
+                <section>
+                    Архитектура = План = Дизайн
+                </section>
+                <section>
+                    Как все устроено в проектировании
+                </section>
+                <section>
+                    <img src="img/electricity.gif" alt="" sizes="" srcset="">
+                </section>
+                <section>
+                    <img src="img/nps.jpg" alt="" srcset="">
+                </section>
+                <section>
+                    <img src="img/nps2.jpg" alt="" sizes="" srcset="">
+                </section>
+                <section>
+                    <img src="img/otkos.jpg" alt="" sizes="" srcset="">
+                </section>
+                <section>
+                    Вернемся в IT
+                </section>
+                <section>
+                    <p>
+                        <b>Архитектура</b> — совокупность важнейших решений об организации программной системы
+                    </p>
+                    <a class="" href="https://ru.wikipedia.org/wiki/%D0%90%D1%80%D1%85%D0%B8%D1%82%D0%B5%D0%BA%D1%82%D1%83%D1%80%D0%B0_%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%BD%D0%BE%D0%B3%D0%BE_%D0%BE%D0%B1%D0%B5%D1%81%D0%BF%D0%B5%D1%87%D0%B5%D0%BD%D0%B8%D1%8F">https://ru.wikipedia.org/wiki/Архитектура_программного_обеспечения</a>
+                </section>
+                <section>
+                    <img src="img/oldcloudflare.jpg" alt="" sizes="" srcset="">
+                </section>
+                <section>
+                    <img src="img/newcloudflare.jpg" alt="" sizes="" srcset="">
+                </section>
+                <section>
+                    <img src="img/cloudflare.png" alt="" sizes="" srcset="">
+                </section>
+                <section>
+                    <img src="img/vuex.png" alt="" sizes="" srcset="">
+                    <p>Vuex</p>
+                </section>
+                <section>
+                    <img src="img/spotify.png">
+                </section>
+                <section>
+                    Важные - это те, которые невозможно поменять
+                </section>
+                <section>
+                    <img src="img/docs.png" alt="" sizes="" srcset="">
+                </section>
+                <section>
+                    <p>
+                        Теорема CAP (известная также как теорема Брюера)
+                    </p>
+                    <img src="img/cap2.jpeg" />
+                </section>
+                <section>
+                    <p>
+                        Теорема CAP (известная также как теорема Брюера)
+                    </p>
+                    <img src="img/cap.png" alt="" sizes="" srcset="">
+                </section>
+                <section>
+                    Eventual consistency
+                    <a href="https://en.wikipedia.org/wiki/Eventual_consistency">en.wikipedia.org/wiki/Eventual_consistency</a>
+                </section>
+                <section>
+                    <p>
+                    Operational transformation
+                    </p>
+                    <a href="https://ru.wikipedia.org/wiki/%D0%9E%D0%BF%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D0%BE%D0%BD%D0%B0%D0%BB%D1%8C%D0%BD%D0%BE%D0%B5_%D0%BF%D1%80%D0%B5%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5">ru.wikipedia.org/wiki/Операциональное_преобразование</a>
+                    <br>
+                    <a href="https://en.wikipedia.org/wiki/Operational_transformation">en.wikipedia.org/wiki/Operational_transformation</a>
+                </section>
+                <section>
+                    Operational transformation определит архитектуру
+                </section>
+                <section>
+                    <p>
+                        Доклад про все это
+                    </p>
+                    <p>
+                        Никита Прокопов — Клиенту и серверу нужно поговорить
+                    </p>
+                    <a href="https://youtu.be/uHGeI9_fgUw">youtu.be/uHGeI9_fgUw</a>
+                </section>
+                <section>
+                    Почему мы начали с алгоритма
+                </section>
+                <section>
+                    <h2>Про лень</h2>
+                     <p class="fragment">Lean</p>
+                </section>
+                <section>
+                     <p>
+                         Lean &mdash; концепция управления производственным предприятием, основанная на постоянном стремлении к устранению всех видов потерь
+                     </p>
+                </section>
+                <section>
+                    Имеет смысл откладывать ваши решения, если они не критичны
+                </section>
+                <section>
+                    Лишний дизайн = потери
+                </section>
+                <section>
+                    Со временем информации становиться больше
+                </section>
+                <section>
+                    <p>
+                    Robert C Martin - Clean Architecture and Design
+                    <br>
+                    (database is a detail)
+                    </p>
+                    <a href="https://www.youtube.com/watch?v=Nsjsiz2A9mg&feature=youtu.be&t=42m20s">youtu.be/Nsjsiz2A9mg?t=2541</a>
+                </section>
+                <section>
+                    <p>
+                        От чего может зависеть архитектура
+                    </p>
+                    <p>Евгений Кривошеев, Архитектура как функция от?</p>
+                    <a href="https://www.youtube.com/watch?v=K-FtLWc8TxI">youtu.be/K-FtLWc8TxI</a>
+                </section>
+                <section>
+                    От чего может зависеть архитектура
+                    <ul>
+                        <li class="fragment">
+                            Внешние требования
+                        </li>
+                        <li class="fragment">
+                            Внутренние требования
+                        </li>
+                        <li class="fragment">
+                            Регламенты, стандарты
+                        </li>
+                        <li class="fragment">
+                            Вопросы доверия и другие человеческие факторы
+                        </li>
+                        <li class="fragment">
+                            Структура команды <span class="fragment">(Закон Конвея)</span>
+                        </li>
+                        <li class="fragment">
+                            Время, ресурсы
+                        </li>
+                        <li class="fragment">
+                            Законы, корпоративные ограничения
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    Разные точки зрения на архитектуру
+                    <img src="img/maxresdefault.jpg" alt="" sizes="" srcset="">
+                </section>
+                <section>
+                    <p>
+                        Схема Закмана
+                    </p>
+                    <a href="https://ru.wikipedia.org/wiki/%D0%9C%D0%BE%D0%B4%D0%B5%D0%BB%D1%8C_%D0%97%D0%B0%D0%BA%D0%BC%D0%B0%D0%BD%D0%B0">ru.wikipedia.org/wiki/Модель_Закмана</a>
+                </section>
+                <section>
+                    <img src="img/zahman.gif" alt="" sizes="" srcset="">
+                </section>
+                <section>
+                    <p>Точки зрения по Закману</p>
+                    <ul>
+                        <li class=fragment>Мотивация</li>
+                        <li class=fragment>Люди</li>
+                        <li class=fragment>Данные</li>
+                        <li class=fragment>Функции</li>
+                        <li class=fragment>Место</li>
+                        <li class=fragment>Время</li>
+                    </ul>
+                </section>
+                <section>
+                    <p>Слои по Закману</p>
+                    <ul>
+                        <li data-fragment-index="5" class=fragment>Контекст</li>
+                        <li data-fragment-index="4" class=fragment>Модель бизнеса</li>
+                        <li data-fragment-index="3" class=fragment>Системная модель</li>
+                        <li data-fragment-index="2" class=fragment>Технологическая модель</li>
+                        <li data-fragment-index="1" class=fragment>Детальное представление</li>
+                    </ul>
+                </section>
+                <section>
+                    И при чем здесь твои примеры?
+                </section>
+                <section>
+                    <p>Нужно ли использовать дополнительную сущность для генерации css классов в Infobip?</p>
+                </section>
+                <section>
+                    <img src="img/zahman.gif" alt="" sizes="" srcset="">
+                </section>
+                <section data-transition="slide none">
+                    <p>
+                    Хоршая архитектура должна быть гибкой!
+                    </p>
+                </section>
+                <section data-transition="none slide">
+                    <p>
+                    <strike>Хоршая архитектура должна быть гибкой!</strike>
+                    </p>
+                    <p>
+                        Архитектура должна подходить
+                    </p>
+                </section>
+                <section>
+                    <h2>Выводы</h2>
+                    <ul>
+                        <li>Архитектура - важные решения</li>
+                        <li class="fragment">Ищи ответы уровнем выше</li>
+                        <li class="fragment">Лень - двигатель прогресса</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>
+                         Спасибо!
+                    </h2>
+                    <p>Алексей Золотых</p>
+                    <p>
+                        twitter: @zolotyh
+                    </p>
+                    <p>
+                        telegram: @aazolotyh
+                    </p>
+
+                </section>
+            </div>
+		</div>
+
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+                hash: true,
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true }
+				]
+			});
+		</script>
+	</body>
+</html>
